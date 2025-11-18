@@ -32,23 +32,30 @@ if USE_DATABASE:
     DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
     if not DATABASE_USERNAME:
         logger.fatal("DATABASE_USERNAME is not set in .env")
-        
+    
     DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
     if not DATABASE_PASSWORD:
         logger.fatal("DATABASE_PASSWORD is not set in .env")
-        
+    
     DATABASE_HOST = os.getenv("DATABASE_HOST")
     if not DATABASE_HOST:
         logger.fatal("DATABASE_HOST is not set in .env")
-        
+    
     DATABASE_PORT = os.getenv("DATABASE_PORT")
     if not DATABASE_PORT:
         logger.fatal("DATABASE_PORT is not set in .env")
     DATABASE_PORT = int(DATABASE_PORT)
-        
+    
     DATABASE_NAME = os.getenv("DATABASE_NAME")
     if not DATABASE_NAME:
         logger.fatal("DATABASE_NAME is not set in .env")
+
+
+
+    CHECK_EVALUATION_RUNS = os.getenv("CHECK_EVALUATION_RUNS")
+    if not CHECK_EVALUATION_RUNS:
+        logger.fatal("CHECK_EVALUATION_RUNS is not set in .env")
+    CHECK_EVALUATION_RUNS = CHECK_EVALUATION_RUNS.lower() == "true"
 
 
 
@@ -67,6 +74,11 @@ if not USE_CHUTES:
 USE_CHUTES = USE_CHUTES.lower() == "true"
 
 if USE_CHUTES:
+    USE_CHUTES_ONLY_KIMI = os.getenv("USE_CHUTES_ONLY_KIMI")
+    if not USE_CHUTES_ONLY_KIMI:
+        logger.fatal("USE_CHUTES_ONLY_KIMI is not set in .env")
+    USE_CHUTES_ONLY_KIMI = USE_CHUTES_ONLY_KIMI.lower() == "true"
+
     CHUTES_BASE_URL = os.getenv("CHUTES_BASE_URL")
     if not CHUTES_BASE_URL:
         logger.fatal("CHUTES_BASE_URL is not set in .env")
@@ -109,6 +121,18 @@ if not USE_CHUTES and not USE_TARGON:
 
 
 
+TEST_INFERENCE_MODELS = os.getenv("TEST_INFERENCE_MODELS")
+if not TEST_INFERENCE_MODELS:
+    logger.fatal("TEST_INFERENCE_MODELS is not set in .env")
+TEST_INFERENCE_MODELS = TEST_INFERENCE_MODELS.lower() == "true"
+
+TEST_EMBEDDING_MODELS = os.getenv("TEST_EMBEDDING_MODELS")
+if not TEST_EMBEDDING_MODELS:
+    logger.fatal("TEST_EMBEDDING_MODELS is not set in .env")
+TEST_EMBEDDING_MODELS = TEST_EMBEDDING_MODELS.lower() == "true"
+
+
+
 # Print out the configuration
 logger.info("=== Inference Gateway Configuration ===")
 logger.info(f"Host: {HOST}")
@@ -119,9 +143,14 @@ if USE_DATABASE:
     logger.info(f"Database Host: {DATABASE_HOST}")
     logger.info(f"Database Port: {DATABASE_PORT}")
     logger.info(f"Database Name: {DATABASE_NAME}")
+    if not CHECK_EVALUATION_RUNS:
+        logger.info("---------------------------------------")
+        logger.warning("Not Checking Evaluation Runs")
 logger.info("---------------------------------------")
 if USE_CHUTES:
     logger.info("Using Chutes")
+    if USE_CHUTES_ONLY_KIMI:
+        logger.warning("Using Chutes Only moonshotai/Kimi-K2-Instruct")
     logger.info(f"Chutes Base URL: {CHUTES_BASE_URL}")
     logger.info(f"Chutes Weight: {CHUTES_WEIGHT}")
 else:
